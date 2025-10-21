@@ -9,10 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 
-var app = builder.Build();
 
 builder.Services.AddDbContext<PromptStudioDbContext>(options =>
- options.UseNpgsql(builder.Configuration.GetConnectionString("PromptStudioDB"))
+ options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 Log.Logger = new LoggerConfiguration()
@@ -39,13 +38,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 });
 
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthorization();
+
+
+var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-builder.Services.AddAuthorization();
 
 if (app.Environment.IsDevelopment())
 {

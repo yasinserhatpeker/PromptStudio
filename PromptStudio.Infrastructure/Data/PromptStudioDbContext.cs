@@ -8,9 +8,7 @@ namespace PromptStudio.Infrastructure.Data;
 public class PromptStudioDbContext : DbContext
 {
     public PromptStudioDbContext(DbContextOptions<PromptStudioDbContext> options) : base(options)
-    {
-
-    }
+    {}
 
     public DbSet<User> Users { get; set; }
     
