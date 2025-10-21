@@ -18,6 +18,13 @@ builder.Services.AddDbContext<PromptStudioDbContext>(options =>
  options.UseNpgsql(builder.Configuration.GetConnectionString("PromptStudioDB"))
 );
 
+Log.Logger = new LoggerConfiguration()
+.ReadFrom.Configuration(builder.Configuration)
+.Enrich.FromLogContext()
+.CreateLogger();
+
+builder.Host.UseSerilog();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
