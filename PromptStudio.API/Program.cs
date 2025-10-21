@@ -1,10 +1,14 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PromptStudio.Infrastructure.Data;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -13,7 +17,14 @@ builder.Services.AddDbContext<PromptStudioDbContext>(options =>
  options.UseNpgsql(builder.Configuration.GetConnectionString("PromptStudioDB"))
 );
 
-// Configure the HTTP request pipeline.
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        
+    };
+});
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
