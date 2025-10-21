@@ -7,9 +7,6 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
-
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -40,6 +37,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
     };
 });
+
+builder.Services.AddSwaggerGen();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 builder.Services.AddAuthorization();
 
 if (app.Environment.IsDevelopment())
