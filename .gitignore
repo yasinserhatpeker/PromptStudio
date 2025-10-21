@@ -1,0 +1,54 @@
+## Build & Output
+bin/
+obj/
+out/
+Debug/
+Release/
+
+## Visual Studio / VS Code
+.vscode/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Mac / Windows
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+## Logs
+*.log
+Logs/
+log.txt
+
+## Environment / Config
+.env
+appsettings.Development.json
+appsettings.Local.json
+
+## Entity Framework
+Migrations/
+
+## Cache
+*.pidb
+*.svclog
+*.dbmdl
+*.bak
+*.tmp
+*.cache
+*.ide
+*.sqlite
+*.sqlite3
+
+## AWS & Deployment
+.aws/
+.secrets/
+*.publish.xml
+
+## Others
+node_modules/
+dist/
+wwwroot/
