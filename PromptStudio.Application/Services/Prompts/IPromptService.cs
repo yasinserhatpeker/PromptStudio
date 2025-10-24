@@ -7,7 +7,7 @@ namespace PromptStudio.Application.Services.Prompts;
 
 public interface IPromptService
 {
-    Task <PromptResponseDTO> CreatePromptAsync(CreatePromptDTO createPromptDTO);
+    Task <PromptResponseDTO> CreatePromptAsync(Guid userId, CreatePromptDTO createPromptDTO);
     Task <PromptResponseDTO> UpdatePromptAsync(Guid Id, Guid userId, UpdatePromptDTO updatePromptDTO);
     Task <bool> DeletePromptAsync(Guid id);
     Task <List<PromptResponseDTO>> GetPromptsByUserAsync(Guid UserId);

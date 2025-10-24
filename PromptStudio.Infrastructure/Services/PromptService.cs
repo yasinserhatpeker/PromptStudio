@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using PromptStudio.Application.DTOs.Prompt;
 using PromptStudio.Application.Services.Prompts;
+using PromptStudio.Domain.Entites;
 using PromptStudio.Infrastructure.Data;
 
 namespace PromptStudio.Infrastructure.Services;
@@ -16,11 +17,27 @@ public class PromptService : IPromptService
         _mapper = mapper;
     }
     
-    public Task<PromptResponseDTO> CreatePromptAsync(CreatePromptDTO createPromptDTO)
+    public async Task<PromptResponseDTO> CreatePromptAsync(CreatePromptDTO createPromptDTO,Guid userId)
     {
-        // Mapping domainModel to DTO
+        // DTO -> Entity
+        var prompt = _mapper.Map<Prompt>(createPromptDTO);
+
+        prompt.UserId = userId;
+        prompt.CreatedAt = DateTime.UtcNow;
+        prompt.Id = Guid.NewGuid();
+
+        _context.Prompts.Add(prompt);
+        await _context.SaveChangesAsync();
+
+
+        //  Entity -> ResponseDTO
+        return _mapper.Map<PromptResponseDTO>(prompt);
         
-        
+    }
+
+    public Task<PromptResponseDTO> CreatePromptAsync(Guid userId, CreatePromptDTO createPromptDTO)
+    {
+        throw new NotImplementedException();
     }
 
     public Task<bool> DeletePromptAsync(Guid id)
@@ -38,8 +55,27 @@ public class PromptService : IPromptService
         throw new NotImplementedException();
     }
 
-    public Task<PromptResponseDTO> UpdatePromptAsync(Guid Id, Guid userId, UpdatePromptDTO updatePromptDTO)
+    public async Task<PromptResponseDTO> UpdatePromptAsync(Guid Id, Guid userId, UpdatePromptDTO updatePromptDTO)
     {
-        throw new NotImplementedException();
+        var prompt = _context.Prompts.FirstOrDefault(p => p.Id == Id);
+        if (prompt == null)
+        {
+            return null;
+        }
+        if (prompt.UserId != userId)
+        {
+            return null;
+        }
+
+        _mapper.Map(prompt, updatePromptDTO);
+
+        prompt.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        return _mapper.Map<PromptResponseDTO>(prompt);
+
+        
+
+        
     }
 }
