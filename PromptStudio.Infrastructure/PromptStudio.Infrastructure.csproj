@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PromptStudio.Domain\PromptStudio.Domain.csproj" />
+    <ProjectReference Include="..\PromptStudio.Application\PromptStudio.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
