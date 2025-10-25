@@ -1,15 +1,46 @@
 using System;
+using System.Data.Common;
+using AutoMapper;
 using PromptStudio.Application.DTOs.User;
 using PromptStudio.Application.Services.Users;
+using PromptStudio.Domain.Entites;
+using PromptStudio.Infrastructure.Data;
 
 namespace PromptStudio.Infrastructure.Services;
 
 public class UserService : IUserService
 {
-    public Task<UserResponseDTO> CreateUserAsync(CreateUserDTO createUserDTO)
+    private readonly IMapper _mapper;
+    private readonly PromptStudioDbContext _context;
+
+    public UserService(IMapper mapper, PromptStudioDbContext context)
     {
-        throw new NotImplementedException();
-    }
+        _mapper = mapper;
+        _context = context;
+    } 
+    public async Task<UserResponseDTO> CreateUserAsync(CreateUserDTO createUserDTO)
+    {
+        // DTO -> Entity
+        var user = _mapper.Map<User>(createUserDTO);
+        if (user == null)
+        {
+            return null;
+        }
+        user.Id = Guid.NewGuid();
+        user.CreatedAt = DateTime.UtcNow;
+        
+        // hashing the password
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
+        // cleaning the string mode
+        createUserDTO.Password=string.Empty;
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+        
+        // entity -> DTO
+        return _mapper.Map<UserResponseDTO>(user);
+        
+}
 
     public Task<bool> DeleteUserAsync(Guid userId)
     {
