@@ -9,7 +9,7 @@ public interface IPromptService
 {
     Task <PromptResponseDTO> CreatePromptAsync(Guid userId, CreatePromptDTO createPromptDTO);
     Task <PromptResponseDTO> UpdatePromptAsync(Guid Id, Guid userId, UpdatePromptDTO updatePromptDTO);
-    Task <bool> DeletePromptAsync(Guid id);
+    Task <bool> DeletePromptAsync(Guid id, Guid userId);
     Task <List<PromptResponseDTO>> GetPromptsByUserAsync(Guid UserId);
     Task <PromptResponseDTO> GetPromptByIdAsync(Guid Id);
 

@@ -1,5 +1,6 @@
 using System;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PromptStudio.Application.DTOs.Prompt;
 using PromptStudio.Application.Services.Prompts;
 using PromptStudio.Domain.Entites;
@@ -16,8 +17,8 @@ public class PromptService : IPromptService
         _context = context;
         _mapper = mapper;
     }
-    
-    public async Task<PromptResponseDTO> CreatePromptAsync(CreatePromptDTO createPromptDTO,Guid userId)
+
+    public async Task<PromptResponseDTO> CreatePromptAsync(Guid userId,CreatePromptDTO createPromptDTO)
     {
         // DTO -> Entity
         var prompt = _mapper.Map<Prompt>(createPromptDTO);
@@ -32,31 +33,38 @@ public class PromptService : IPromptService
 
         //  Entity -> ResponseDTO
         return _mapper.Map<PromptResponseDTO>(prompt);
-        
-    }
 
-    public Task<PromptResponseDTO> CreatePromptAsync(Guid userId, CreatePromptDTO createPromptDTO)
-    {
-        throw new NotImplementedException();
     }
+    
 
-    public async Task<bool> DeletePromptAsync(Guid id)
+    public async Task<bool> DeletePromptAsync(Guid userId, Guid id)
     {
-        var prompt = _context.Prompts.FirstOrDefault(p => p.Id == id);
+        var prompt = await _context.Prompts.FirstOrDefaultAsync(p => p.Id == id);
         if (prompt == null)
         {
             return false;
 
         }
+        if (prompt.UserId != userId)
+        {
+            return false;
+        }
+        
         _context.Prompts.Remove(prompt);
         await _context.SaveChangesAsync();
         return true;
         
     }
 
-    public Task<PromptResponseDTO> GetPromptByIdAsync(Guid Id)
+    public async Task<PromptResponseDTO> GetPromptByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var prompt = await _context.Prompts.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+        if (prompt == null)
+        {
+            return null;
+        }
+
+        return _mapper.Map<PromptResponseDTO>(prompt);
     }
 
     public Task<List<PromptResponseDTO>> GetPromptsByUserAsync(Guid UserId)
