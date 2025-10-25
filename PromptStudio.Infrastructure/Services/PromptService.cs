@@ -40,9 +40,18 @@ public class PromptService : IPromptService
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeletePromptAsync(Guid id)
+    public async Task<bool> DeletePromptAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var prompt = _context.Prompts.FirstOrDefault(p => p.Id == id);
+        if (prompt == null)
+        {
+            return false;
+
+        }
+        _context.Prompts.Remove(prompt);
+        await _context.SaveChangesAsync();
+        return true;
+        
     }
 
     public Task<PromptResponseDTO> GetPromptByIdAsync(Guid Id)
@@ -52,7 +61,7 @@ public class PromptService : IPromptService
 
     public Task<List<PromptResponseDTO>> GetPromptsByUserAsync(Guid UserId)
     {
-        throw new NotImplementedException();
+         throw new NotImplementedException();
     }
 
     public async Task<PromptResponseDTO> UpdatePromptAsync(Guid Id, Guid userId, UpdatePromptDTO updatePromptDTO)
