@@ -67,9 +67,12 @@ public class PromptService : IPromptService
         return _mapper.Map<PromptResponseDTO>(prompt);
     }
 
-    public Task<List<PromptResponseDTO>> GetPromptsByUserAsync(Guid UserId)
+    public async Task<List<PromptResponseDTO>> GetPromptsByUserAsync(Guid UserId)
     {
-         throw new NotImplementedException();
+        var prompts = await _context.Prompts.Where(p => p.UserId == UserId).OrderByDescending(p=>p.CreatedAt).AsNoTracking().ToListAsync();
+
+       return _mapper.Map<List<PromptResponseDTO>>(prompts);
+         
     }
 
     public async Task<PromptResponseDTO> UpdatePromptAsync(Guid Id, Guid userId, UpdatePromptDTO updatePromptDTO)
@@ -84,7 +87,8 @@ public class PromptService : IPromptService
             return null;
         }
 
-        _mapper.Map(prompt, updatePromptDTO);
+         _mapper.Map(prompt, updatePromptDTO);
+          
 
         prompt.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
