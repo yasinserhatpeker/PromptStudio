@@ -1,5 +1,6 @@
 using System;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using PromptStudio.Application.DTOs.User;
 using PromptStudio.Application.Services.Users;
@@ -59,7 +60,20 @@ public class UserService : IUserService
 
     public async Task<UserResponseDTO> UpdateUserAsync(Guid userId, UpdateUserDTO updateUserDTO)
     {
-   
-        throw new NotImplementedException();
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+        {
+            return null;
+        }
+        // mapping over existing user entity
+        _mapper.Map(updateUserDTO, user);
+
+        user.UpdatedAt = DateTime.UtcNow;
+
+        
+        await _context.SaveChangesAsync();
+
+         return _mapper.Map<UserResponseDTO>(user);
+
     }
 }

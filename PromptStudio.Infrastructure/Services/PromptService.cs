@@ -86,7 +86,7 @@ public class PromptService : IPromptService
         {
             return null;
         }
-
+         // mapping over existing prompt entity
          _mapper.Map(prompt, updatePromptDTO);
           
 
