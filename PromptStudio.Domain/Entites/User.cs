@@ -9,6 +9,7 @@ public class User
     public string PasswordHash { get; set; } = default!;
     public string? Username { get; set; }
     public ICollection<Prompt> Prompts { get; set; } = new List<Prompt>();
+    public ICollection<PromptCollection> PromptCollections { get; set; } = new List<PromptCollection>();
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set;} = DateTime.UtcNow;
 

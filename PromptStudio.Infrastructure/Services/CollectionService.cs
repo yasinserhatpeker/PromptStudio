@@ -36,7 +36,7 @@ public class CollectionService : ICollectionService
         throw new NotImplementedException();
     }
 
-    public Task<ResponseCollectionDTO> GetPromptByIdAsync(Guid Id)
+    public Task<ResponseCollectionDTO> GetPromptCollectionByUserAsync(Guid UserId)
     {
         throw new NotImplementedException();
     }

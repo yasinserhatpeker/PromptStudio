@@ -9,6 +9,6 @@ public interface ICollectionService
     Task<ResponseCollectionDTO> UpdatePromptCollectionAsync(Guid Id, Guid userId, UpdateCollectionDTO updateCollectionDTO);
     Task<bool> DeletePromptCollectionAsync(Guid Id);
     Task<List<ResponseCollectionDTO>>  GetAllPromptCollectionAsync(Guid UserId);
-    Task <ResponseCollectionDTO> GetPromptByIdAsync(Guid Id);
+    Task <ResponseCollectionDTO> GetPromptCollectionByUserAsync(Guid UserId);
 
 }
