@@ -7,14 +7,29 @@ namespace PromptStudio.Infrastructure.Data;
 
 public class PromptStudioDbContext : DbContext
 {
-    public PromptStudioDbContext(DbContextOptions<PromptStudioDbContext> options) : base(options)
-    {}
+    
 
     public DbSet<User> Users { get; set; }
-    
+
     public DbSet<Prompt> Prompts { get; set; }
 
-    public DbSet<Collection> Collections{ get; set; }
+    public DbSet<Collection> Collections { get; set; }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Prompt>()
+          .HasOne(p => p.User)
+          .WithMany(p => p.Prompts)
+          .HasForeignKey(p => p.UserId)
+          .OnDelete(DeleteBehavior.Cascade);
+    }
 
 
+    public PromptStudioDbContext(DbContextOptions<PromptStudioDbContext> options) : base(options)
+    {
+    }
+
+
+  
 }

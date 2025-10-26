@@ -45,9 +45,16 @@ public class UserService : IUserService
         
 }
 
-    public Task<bool> DeleteUserAsync(Guid userId)
+    public async Task<bool> DeleteUserAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+        {
+            return false;
+        }
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     public Task<List<UserResponseDTO>> GetAllUsers()
