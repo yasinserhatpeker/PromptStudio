@@ -2,7 +2,7 @@ using System;
 
 namespace PromptStudio.Domain.Entites;
 
-public class Collection
+public class PromptCollection
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = default!;

@@ -1,22 +1,37 @@
 using System;
+using System.Collections.ObjectModel;
+using AutoMapper;
 using PromptStudio.Application.DTOs.Collection;
 using PromptStudio.Application.Services.Collections;
+using PromptStudio.Domain.Entites;
+using PromptStudio.Infrastructure.Data;
 
 namespace PromptStudio.Infrastructure.Services;
 
 public class CollectionService : ICollectionService
 {
-    public Task<ResponseCollectionDTO> CreateCollectionAsync(CreateCollectionDTO createCollectionDTO)
+    private readonly PromptStudioDbContext _context;
+    private readonly IMapper _mapper;
+
+    public CollectionService(PromptStudioDbContext context, IMapper mapper)
+    {
+        _context = context;
+        _mapper = mapper;
+    }
+
+    public Task<ResponseCollectionDTO> CreatePromptCollectionAsync(CreateCollectionDTO createCollectionDTO)
+    {
+         throw new NotImplementedException();
+
+
+    }
+
+    public Task<bool> DeletePromptCollectionAsync(Guid Id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteCollectionAsync(Guid Id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<ResponseCollectionDTO>> GetAllCollectionAsync(Guid UserId)
+    public Task<List<ResponseCollectionDTO>> GetAllPromptCollectionAsync(Guid UserId)
     {
         throw new NotImplementedException();
     }
@@ -26,7 +41,7 @@ public class CollectionService : ICollectionService
         throw new NotImplementedException();
     }
 
-    public Task<ResponseCollectionDTO> UpdateCollectionAsync(Guid Id, Guid userId, UpdateCollectionDTO updateCollectionDTO)
+    public Task<ResponseCollectionDTO> UpdatePromptCollectionAsync(Guid Id, Guid userId, UpdateCollectionDTO updateCollectionDTO)
     {
         throw new NotImplementedException();
     }

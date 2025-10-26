@@ -74,7 +74,9 @@ public class UserService : IUserService
         return _mapper.Map<UserResponseDTO>(user);
     }
 
-    public async Task<UserResponseDTO> UpdateUserAsync(Guid userId, UpdateUserDTO updateUserDTO)
+
+    public async Task<UserResponseDTO?> UpdateUserAsync(Guid userId, UpdateUserDTO updateUserDTO)
+
     {
         var user = await _context.Users.FindAsync(userId);
         if (user == null)

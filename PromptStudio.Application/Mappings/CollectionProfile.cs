@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.VisualBasic;
 using PromptStudio.Application.DTOs.Collection;
 using PromptStudio.Application.DTOs.Prompt;
+using PromptStudio.Domain.Entites;
 
 namespace PromptStudio.Application.Mappings;
 
@@ -12,9 +13,9 @@ public class CollectionProfile : Profile
 {
    public CollectionProfile()
     {
-        CreateMap<Collection, ResponseCollectionDTO>().ReverseMap();
-        CreateMap<CreateCollectionDTO, Collection>().ReverseMap();
-        CreateMap<UpdateCollectionDTO, Collection>().ReverseMap();
+        CreateMap<PromptCollection, ResponseCollectionDTO>().ReverseMap();
+        CreateMap<CreateCollectionDTO, PromptCollection>().ReverseMap();
+        CreateMap<UpdateCollectionDTO, PromptCollection>().ReverseMap();
     }
    
 }

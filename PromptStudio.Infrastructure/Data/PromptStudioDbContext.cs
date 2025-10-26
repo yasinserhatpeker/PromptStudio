@@ -13,7 +13,7 @@ public class PromptStudioDbContext : DbContext
 
     public DbSet<Prompt> Prompts { get; set; }
 
-    public DbSet<Collection> Collections { get; set; }
+    public DbSet<PromptCollection> Collections { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
