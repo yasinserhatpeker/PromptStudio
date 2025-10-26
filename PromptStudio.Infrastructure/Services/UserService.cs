@@ -1,7 +1,9 @@
 using System;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PromptStudio.Application.DTOs.User;
 using PromptStudio.Application.Services.Users;
 using PromptStudio.Domain.Entites;
@@ -50,12 +52,17 @@ public class UserService : IUserService
 
     public Task<List<UserResponseDTO>> GetAllUsers()
     {
-        throw new NotImplementedException();
+          throw new NotImplementedException();
     }
 
-    public Task<UserResponseDTO> GetUserByIdAsync(Guid userId)
+    public async Task<UserResponseDTO> GetUserByIdAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+        {
+            return null;
+        }
+        return _mapper.Map<UserResponseDTO>(user);
     }
 
     public async Task<UserResponseDTO> UpdateUserAsync(Guid userId, UpdateUserDTO updateUserDTO)
