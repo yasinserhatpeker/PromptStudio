@@ -31,7 +31,7 @@ public class UserService : IUserService
         
         // hashing the password
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
-        // cleaning the string mode
+        // cleaning the plain text password
         createUserDTO.Password=string.Empty;
 
         _context.Users.Add(user);
