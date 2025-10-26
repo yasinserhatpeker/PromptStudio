@@ -57,9 +57,11 @@ public class UserService : IUserService
         return true;
     }
 
-    public Task<List<UserResponseDTO>> GetAllUsers()
+    public async Task<List<UserResponseDTO>> GetAllUsers()
     {
-          throw new NotImplementedException();
+        var users = await _context.Users.AsNoTracking().ToListAsync();
+       
+        return _mapper.Map<List<UserResponseDTO>>(users);
     }
 
     public async Task<UserResponseDTO> GetUserByIdAsync(Guid userId)
