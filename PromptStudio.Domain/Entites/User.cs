@@ -9,6 +9,7 @@ public class User
     public string PasswordHash { get; set; } = default!;
     public string? Username { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set;} = DateTime.UtcNow;
 
 
 }
