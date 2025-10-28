@@ -59,11 +59,7 @@ public class PromptService : IPromptService
     public async Task<PromptResponseDTO> GetPromptByIdAsync(Guid id)
     {
         var prompt = await _context.Prompts.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
-        if (prompt == null)
-        {
-            return null;
-        }
-
+       
         return _mapper.Map<PromptResponseDTO>(prompt);
     }
 

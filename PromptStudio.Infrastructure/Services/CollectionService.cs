@@ -59,14 +59,21 @@ public class CollectionService : ICollectionService
 
     }
 
-    public Task<List<ResponseCollectionDTO>> GetAllPromptCollectionAsync(Guid UserId)
+    public async Task<List<ResponseCollectionDTO>> GetAllPromptCollectionAsync(Guid UserId)
     {
-        throw new NotImplementedException();
+        var collections = await _context.Collections.Where(c => c.UserId == UserId).AsNoTracking().OrderByDescending(c => c.CreatedAt).ToListAsync();
+        
+        // entity -> dto
+        return _mapper.Map<List<ResponseCollectionDTO>>(collections);
     }
 
-    public Task<ResponseCollectionDTO> GetPromptCollectionByUserAsync(Guid UserId)
+    public async Task<List<ResponseCollectionDTO>> GetPromptCollectionsByUserAsync(Guid UserId)
     {
-        throw new NotImplementedException();
+        var collections = await _context.Collections.Where(p => p.UserId == UserId).OrderByDescending(p => p.CreatedAt).AsNoTracking().ToListAsync();
+        
+        // entity -> dto
+        return _mapper.Map<List<ResponseCollectionDTO>>(collections);
+
     }
 
     public async Task<ResponseCollectionDTO> UpdatePromptCollectionAsync(Guid Id, Guid userId, UpdateCollectionDTO updateCollectionDTO)
