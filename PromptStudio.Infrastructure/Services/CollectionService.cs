@@ -41,9 +41,22 @@ public class CollectionService : ICollectionService
         
     }
 
-    public Task<bool> DeletePromptCollectionAsync(Guid Id)
+    public async Task<bool> DeletePromptCollectionAsync(Guid Id,Guid userId)
     {
-        throw new NotImplementedException();
+        var collection = await _context.Collections.FindAsync(Id);
+        if (collection == null)
+        {
+            return false;
+        }
+        if(collection.UserId!=userId)
+        {
+            return false;
+        }
+        _context.Collections.Remove(collection);
+        await _context.SaveChangesAsync();
+
+        return true;
+
     }
 
     public Task<List<ResponseCollectionDTO>> GetAllPromptCollectionAsync(Guid UserId)
@@ -72,7 +85,7 @@ public class CollectionService : ICollectionService
         collection.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-
+         // entity-> dto
         return _mapper.Map<ResponseCollectionDTO>(collection);
        
     }

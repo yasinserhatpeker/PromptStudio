@@ -19,9 +19,11 @@ public class PromptStudioDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Prompt>()
+          
           .HasOne(p => p.User)
           .WithMany(p => p.Prompts)
           .HasForeignKey(p => p.UserId)
+          
           .OnDelete(DeleteBehavior.Cascade);
     }
 
