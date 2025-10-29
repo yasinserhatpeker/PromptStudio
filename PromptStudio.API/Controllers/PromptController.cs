@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PromptStudio.Application.DTOs.Prompt;
+using PromptStudio.Infrastructure.Migrations;
 using PromptStudio.Infrastructure.Services;
 
 namespace PromptStudio.API.Controllers
@@ -49,7 +50,7 @@ namespace PromptStudio.API.Controllers
 
         // DELETE api/prompt/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePromptById(Guid userId, Guid id)
+        public async Task<IActionResult> DeletePromptById([FromQuery] Guid userId, Guid id)
         {
             var prompt = await _promptService.GetPromptByIdAsync(id);
             if (prompt == null)
@@ -69,6 +70,44 @@ namespace PromptStudio.API.Controllers
 
 
         }
+        // UPDATE api/prompt/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePrompt([FromQuery] Guid userId, Guid id, [FromBody] UpdatePromptDTO updatePromptDTO)
+        {
+            var prompt = await _promptService.GetPromptByIdAsync(id);
+            if (prompt == null)
+            {
+                return NotFound("promt cannot found");
+            }
+            if (prompt.UserId != userId)
+            {
+                return Forbid();
+            }
+            var result = await _promptService.UpdatePromptAsync(userId, id, updatePromptDTO);
+            if (result == null)
+            {
+                return StatusCode(500, "An error occured during the prompt updating");
+            }
+
+            return Ok(result);
+
+        }
+        // GET api/prompt/user
+        [HttpGet]
+        public async Task<IActionResult> GetPromptsByUser([FromQuery]Guid userId)
+        {
+            var prompts = await _promptService.GetPromptsByUserAsync(userId);
+            if (prompts.Count == 0 || prompts== null)
+            {
+                return NotFound("prompts cannot found");
+            }
+           return Ok(prompts);
+        }
+        
+
+
+
+
         
         
     
