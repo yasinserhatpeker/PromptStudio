@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PromptStudio.Application.DTOs.Prompt;
+using PromptStudio.Application.Services.Prompts;
 using PromptStudio.Infrastructure.Migrations;
 using PromptStudio.Infrastructure.Services;
 
@@ -10,9 +11,9 @@ namespace PromptStudio.API.Controllers
     [ApiController]
     public class PromptController : ControllerBase
     {
-        private readonly PromptService _promptService;
+        private readonly IPromptService _promptService;
 
-        public PromptController(PromptService promptService)
+        public PromptController(IPromptService promptService)
         {
             _promptService = promptService;
         }

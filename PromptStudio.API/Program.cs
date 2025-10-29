@@ -2,7 +2,12 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PromptStudio.Application.Mappings;
+using PromptStudio.Application.Services.Collections;
+using PromptStudio.Application.Services.Prompts;
+using PromptStudio.Application.Services.Users;
 using PromptStudio.Infrastructure.Data;
+using PromptStudio.Infrastructure.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,9 +15,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 
+
+
 builder.Services.AddDbContext<PromptStudioDbContext>(options =>
  options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
 
 Log.Logger = new LoggerConfiguration()
 .ReadFrom.Configuration(builder.Configuration)
@@ -32,12 +40,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
 
     };
 });
 
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(typeof(PromptProfile).Assembly);
+builder.Services.AddScoped<IPromptService, PromptService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICollectionService, CollectionService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
