@@ -59,12 +59,14 @@ public class CollectionService : ICollectionService
 
     }
 
-    public async Task<List<ResponseCollectionDTO>> GetAllPromptCollectionAsync(Guid UserId)
+    public async Task<ResponseCollectionDTO> GetPromptCollectionAsync(Guid UserId,Guid Id)
     {
-        var collections = await _context.Collections.Where(c => c.UserId == UserId).AsNoTracking().OrderByDescending(c => c.CreatedAt).ToListAsync();
-        
+        var collection = await _context.Collections.Where(c => c.UserId == UserId && c.Id == Id).AsNoTracking().OrderByDescending(c => c.CreatedAt).FirstOrDefaultAsync();
+        if (collection == null)
+         return null!;
+         
         // entity -> dto
-        return _mapper.Map<List<ResponseCollectionDTO>>(collections);
+        return _mapper.Map<ResponseCollectionDTO>(collection);
     }
 
     public async Task<List<ResponseCollectionDTO>> GetPromptCollectionsByUserAsync(Guid UserId)
