@@ -75,23 +75,23 @@ public class UserService : IUserService
     }
 
 
-    public async Task<UserResponseDTO?> UpdateUserAsync(Guid userId, UpdateUserDTO updateUserDTO)
+  public async Task<UserResponseDTO?> UpdateUserAsync(Guid userId, UpdateUserDTO updateUserDTO)
+{
+    var user = await _context.Users.FindAsync(userId);
+    if (user == null)
+        return null;
 
-    {
-        var user = await _context.Users.FindAsync(userId);
-        if (user == null)
-        {
-            return null;
-        }
-        // mapping over existing user entity
-        _mapper.Map(updateUserDTO, user);
+    if (!string.IsNullOrEmpty(updateUserDTO.Username))
+        user.Username = updateUserDTO.Username;
 
-        user.UpdatedAt = DateTime.UtcNow;
+    if (!string.IsNullOrEmpty(updateUserDTO.Password))
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(updateUserDTO.Password);
 
-        
-        await _context.SaveChangesAsync();
+    user.UpdatedAt = DateTime.UtcNow;
 
-         return _mapper.Map<UserResponseDTO>(user);
+    await _context.SaveChangesAsync();
 
-    }
+    return _mapper.Map<UserResponseDTO>(user);
+}
+
 }

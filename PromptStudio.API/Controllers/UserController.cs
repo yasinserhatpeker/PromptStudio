@@ -61,8 +61,40 @@ namespace PromptStudio.API.Controllers
             return NoContent();
         }
 
+        // UPDATE api/user/{userId}
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateUser([FromRoute] Guid userId, [FromBody] UpdateUserDTO updateUserDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _userService.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User cannot found");
+            }
+            var result = await _userService.UpdateUserAsync(userId, updateUserDTO);
+            if (result == null)
+            {
+                return BadRequest("User cannot updated");
+            }
+            return Ok(result);
+        }
+    // GET api/users
+    [HttpGet]
+    public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _userService.GetAllUsers();
+            if(!users.Any() || users == null)
+            {
+                return NoContent();
+            }
+            return Ok(users);
+
+        }
+
     }
     
-    // UPDATE api/user/{userId}
     
 }
