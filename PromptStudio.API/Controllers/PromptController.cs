@@ -60,7 +60,7 @@ namespace PromptStudio.API.Controllers
             }
             if (prompt.UserId != userId)
             {
-                return Forbid();
+                return BadRequest();
             }
             var result = await _promptService.DeletePromptAsync(userId, id);
             if (!result)

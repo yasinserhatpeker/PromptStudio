@@ -40,9 +40,27 @@ namespace PromptStudio.API.Controllers
             {
                 return NotFound();
             }
-           
+
             return Ok(result);
         }
+
+        // DELETE api/user/{userId}
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteUser([FromRoute]Guid userId)
+        {
+            var user = await _userService.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User cannot found");
+            }
+            var result = await _userService.DeleteUserAsync(userId);
+            if (!result)
+            {
+                return BadRequest();
+            }
+            return NoContent();
+        }
+
        
 
 
