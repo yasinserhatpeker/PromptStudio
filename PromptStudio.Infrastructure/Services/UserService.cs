@@ -27,7 +27,7 @@ public class UserService : IUserService
         var user = _mapper.Map<User>(createUserDTO);
         if (user == null)
         {
-            return null;
+            return null!;
         }
         user.Id = Guid.NewGuid();
         user.CreatedAt = DateTime.UtcNow;
@@ -69,7 +69,7 @@ public class UserService : IUserService
         var user = await _context.Users.FindAsync(userId);
         if (user == null)
         {
-            return null;
+            return null!;
         }
         return _mapper.Map<UserResponseDTO>(user);
     }

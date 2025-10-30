@@ -22,9 +22,9 @@ namespace PromptStudio.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePrompt([FromBody] CreatePromptDTO createPromptDTO, [FromQuery] Guid userId)
         {
-            if (createPromptDTO == null)
+            if(!ModelState.IsValid)
             {
-                return BadRequest("Prompt data is required.");
+                return BadRequest(ModelState);
             }
             var result = await _promptService.CreatePromptAsync(userId, createPromptDTO);
             if (result == null)
