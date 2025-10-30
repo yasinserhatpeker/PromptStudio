@@ -28,7 +28,7 @@ namespace PromptStudio.API.Controllers
             {
                 return BadRequest("User cannot be created");
             }
-            return CreatedAtAction(nameof(GetUserById), new { id = result.Id }, result);
+            return CreatedAtAction(nameof(GetUserById), new { userId = result.Id }, result);
         }
 
         // GET api/user/{userId}
@@ -46,7 +46,7 @@ namespace PromptStudio.API.Controllers
 
         // DELETE api/user/{userId}
         [HttpDelete("{userId}")]
-        public async Task<IActionResult> DeleteUser([FromRoute]Guid userId)
+        public async Task<IActionResult> DeleteUser([FromRoute] Guid userId)
         {
             var user = await _userService.GetUserByIdAsync(userId);
             if (user == null)
@@ -61,8 +61,8 @@ namespace PromptStudio.API.Controllers
             return NoContent();
         }
 
-       
-
-
     }
+    
+    // UPDATE api/user/{userId}
+    
 }

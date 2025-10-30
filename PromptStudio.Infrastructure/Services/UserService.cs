@@ -33,7 +33,7 @@ public class UserService : IUserService
         user.CreatedAt = DateTime.UtcNow;
         
         // hashing the password
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDTO.Password);
         // cleaning the plain text password
         createUserDTO.Password=string.Empty;
 
