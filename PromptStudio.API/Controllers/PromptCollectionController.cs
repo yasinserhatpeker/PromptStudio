@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PromptStudio.Application.Services.Collections;
+using PromptStudio.Application.Services.Prompts;
 
 namespace PromptStudio.API.Controllers
 {
@@ -7,5 +9,13 @@ namespace PromptStudio.API.Controllers
     [ApiController]
     public class PromptCollectionController : ControllerBase
     {
+        private readonly ICollectionService _collectionService;
+
+        public PromptCollectionController(ICollectionService collectionService)
+        {
+            _collectionService = collectionService;
+        }
+
+        
     }
 }
