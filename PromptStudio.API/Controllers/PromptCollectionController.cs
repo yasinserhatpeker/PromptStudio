@@ -52,22 +52,41 @@ namespace PromptStudio.API.Controllers
         [HttpDelete("{userId}/{Id}")]
         public async Task<IActionResult> DeletePromptCollection([FromRoute] Guid userId, [FromRoute] Guid Id)
         {
-            var promptCollection = await _collectionService.GetPromptCollectionAsync(userId,Id);
+            var promptCollection = await _collectionService.GetPromptCollectionAsync(userId, Id);
             if (promptCollection == null)
             {
-                return NotFound();
+                return NotFound("Collection not found.");
             }
             var result = await _collectionService.DeletePromptCollectionAsync(Id, userId);
             if (!result)
             {
-                return BadRequest("the collection cannot be deleted");
+                return BadRequest("the collection could not be deleted");
             }
             return NoContent();
 
         }
 
-        // GET api/collection/{userId}/{Id}
-        [HttpGet("{userId}/{Id}")]
+        // PUT api/collection/{userId}/{Id}
+        [HttpPut("{userId}/{Id}")]
+        public async Task<IActionResult> UpdatePromptCollection([FromBody]UpdateCollectionDTO updateCollectionDTO, [FromRoute] Guid userId, [FromRoute] Guid Id )
+        {
+            var promptCollection = await _collectionService.GetPromptCollectionAsync(userId, Id);
+            if (promptCollection == null)
+            {
+                return NotFound("Collection not found.");
+            }
+            var result = await _collectionService.UpdatePromptCollectionAsync(Id, userId, updateCollectionDTO);
+            if (result == null)
+            {
+                return BadRequest("Collection could not be updated");
+            }
+            return Ok(result);
+
+             
+            
+        }
+
+        
         
 
 
