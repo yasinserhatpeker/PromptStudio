@@ -52,6 +52,7 @@ builder.Services.AddAutoMapper(typeof(PromptProfile).Assembly);
 builder.Services.AddScoped<IPromptService, PromptService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICollectionService, CollectionService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
