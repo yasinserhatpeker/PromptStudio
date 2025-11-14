@@ -7,6 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using PromptStudio.Application.DTOs.User;
 using PromptStudio.Application.Services.Users;
 using PromptStudio.Infrastructure.Data;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 
 namespace PromptStudio.Infrastructure.Services;
 
@@ -40,7 +42,28 @@ public class AuthService : IAuthService
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
 
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+        };
+
+        var tokenDescriptor= new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires=DateTime.UtcNow.AddHours(1),
+            Issuer=_configuration["Jwt:Issuer"],
+            Audience=_configuration["Jwt:Audience"],
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature
+            )
+        };
         
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var jwt = tokenHandler.WriteToken(token);
+
+        return jwt;
         
         
 
