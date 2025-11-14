@@ -39,6 +39,9 @@ public class AuthService : IAuthService
         }
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
+
+        
+        
         
 
     }

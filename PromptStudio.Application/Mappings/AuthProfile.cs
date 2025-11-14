@@ -9,8 +9,9 @@ public class AuthProfile : Profile
 {
    public AuthProfile()
     {
-        CreateMap<UserResponseDTO,User>();
+        CreateMap<CreateUserDTO, User>();
         CreateMap<User,UserResponseDTO>();
+       
         
     }
 }
