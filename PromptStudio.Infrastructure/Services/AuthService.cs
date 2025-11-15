@@ -69,11 +69,11 @@ public class AuthService : IAuthService
 
     public Task<string?> RefreshTokenAsync(string refreshToken)
     {
-        
+        throw new NotImplementedException();
     }
 
     public Task<UserResponseDTO?> RegisterAsync(CreateUserDTO createUserDTO)
     {
-        
+        throw new NotImplementedException();
     }
 }
