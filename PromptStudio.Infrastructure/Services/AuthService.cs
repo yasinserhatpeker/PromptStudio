@@ -65,9 +65,7 @@ public class AuthService : IAuthService
 
         return jwt;
         
-        
-
-    }
+ }
 
     public Task<string?> RefreshTokenAsync(string refreshToken)
     {
