@@ -11,6 +11,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using PromptStudio.Domain.Entites;
 using System.Security.Cryptography.X509Certificates;
+using System.Reflection.Metadata.Ecma335;
 
 namespace PromptStudio.Infrastructure.Services;
 
@@ -87,7 +88,9 @@ public class AuthService : IAuthService
         
  }
 
-     public async Task<AuthResultDTO?> RefreshTokenAsync(string refreshToken)
+   
+
+    public async Task<AuthResultDTO?> RefreshTokenAsync(string refreshToken)
     {
         var existingToken = await _context.RefreshTokens.Include(x=>x.User).FirstOrDefaultAsync(x=>x.Token==refreshToken);
 
@@ -140,9 +143,40 @@ public class AuthService : IAuthService
 
     }
 
-    public Task<UserResponseDTO?> RegisterAsync(CreateUserDTO createUserDTO)
+    public async Task<UserResponseDTO?> RegisterAsync(CreateUserDTO createUserDTO)
     {
-        throw new NotImplementedException();
+        var exists = await _context.Users.AnyAsync(u => u.Email == createUserDTO.Email);
+        if(exists)
+        {
+            return null;
+        }
+        var user = _mapper.Map<User>(createUserDTO);
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDTO.Password);
+        user.CreatedAt = DateTime.UtcNow;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
+
+        return _mapper.Map<UserResponseDTO>(user);
+
+}
+
+    public async Task<bool> LogoutAsync(string refreshToken)
+    {
+      var existingToken = await _context.RefreshTokens.FirstOrDefaultAsync(u => u.Token==refreshToken);
+
+      if(existingToken==null)
+        {
+            return false;
+        }
+        if(existingToken.RevokedAt != null)
+        {
+            return true;
+        }
+        existingToken.RevokedAt = DateTime.UtcNow;
+        return true;
     }
 
     
