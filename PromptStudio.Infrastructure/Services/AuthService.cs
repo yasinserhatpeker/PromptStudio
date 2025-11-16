@@ -10,6 +10,7 @@ using PromptStudio.Infrastructure.Data;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using PromptStudio.Domain.Entites;
+using System.Security.Cryptography.X509Certificates;
 
 namespace PromptStudio.Infrastructure.Services;
 
@@ -82,14 +83,61 @@ public class AuthService : IAuthService
             AccessToken=jwt,
             RefreshToken=refreshTokenValue,
         };
-        
+
         
  }
 
-   
-    Task<AuthResultDTO?> IAuthService.RefreshTokenAsync(string refreshToken)
+     public async Task<AuthResultDTO?> RefreshTokenAsync(string refreshToken)
     {
-        throw new NotImplementedException();
+        var existingToken = await _context.RefreshTokens.Include(x=>x.User).FirstOrDefaultAsync(x=>x.Token==refreshToken);
+
+        if(existingToken == null)
+        {
+            return null;
+        }
+        if(existingToken.ExpiresAt < DateTime.UtcNow)
+        {
+            return null;
+        }
+        if(existingToken.RevokedAt != null)
+        {
+            return null;
+        }
+        var user =existingToken.User;
+        if(user == null)
+        {
+            return null;
+        }
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
+        
+        var claims = new []
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+        };
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddHours(1),
+            Issuer = _configuration["Jwt:Issuer"],
+            Audience = _configuration["Jwt:Audience"], 
+            SigningCredentials = new SigningCredentials(new
+            SymmetricSecurityKey(key),
+            SecurityAlgorithms.HmacSha256Signature
+            )
+        };
+
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var newAccessToken = tokenHandler.WriteToken(token);
+
+        return new AuthResultDTO
+        {
+            AccessToken = newAccessToken,
+            RefreshToken=refreshToken
+        };
+
+
     }
 
     public Task<UserResponseDTO?> RegisterAsync(CreateUserDTO createUserDTO)
