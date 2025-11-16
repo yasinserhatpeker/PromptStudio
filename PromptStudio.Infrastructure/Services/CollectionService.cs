@@ -27,7 +27,7 @@ public class CollectionService : ICollectionService
         var collection = _mapper.Map<PromptCollection>(createCollectionDTO);
         if (collection == null)
         {
-            return null;
+            return null!;
         }
        
         collection.Id = Guid.NewGuid();
