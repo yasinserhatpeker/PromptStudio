@@ -83,11 +83,11 @@ public class CollectionService : ICollectionService
         var collection = await _context.Collections.FirstOrDefaultAsync(c => c.Id == Id);
         if (collection == null)
         {
-            return null;
+            return null!;
         }
         if (collection.UserId != userId)
         {
-            return null;
+            return null!;
         }
         // mapping-existing
         _mapper.Map(updateCollectionDTO, collection);
