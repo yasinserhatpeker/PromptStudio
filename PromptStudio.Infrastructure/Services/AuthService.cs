@@ -9,6 +9,7 @@ using PromptStudio.Application.Services.Users;
 using PromptStudio.Infrastructure.Data;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
+using PromptStudio.Domain.Entites;
 
 namespace PromptStudio.Infrastructure.Services;
 
@@ -27,7 +28,7 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
 
-    public async Task<string?> LoginAsync(LoginDTO loginDTO)
+    public async Task<AuthResultDTO?> LoginAsync(LoginDTO loginDTO)
     {
         var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == loginDTO.Email);
         if (user == null)
@@ -63,11 +64,30 @@ public class AuthService : IAuthService
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var jwt = tokenHandler.WriteToken(token);
 
-        return jwt;
+        var refreshTokenValue = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+
+        var refreshToken = new RefreshToken
+        {
+            Id = Guid.NewGuid(),
+            userId=user.Id,
+            Token=refreshTokenValue,
+            ExpiresAt=DateTime.UtcNow.AddDays(7),
+        };
+
+        await _context.RefreshTokens.AddAsync(refreshToken);
+        await _context.SaveChangesAsync();
+
+        return new AuthResultDTO
+        {
+            AccessToken=jwt,
+            RefreshToken=refreshTokenValue,
+        };
+        
         
  }
 
-    public Task<string?> RefreshTokenAsync(string refreshToken)
+   
+    Task<AuthResultDTO?> IAuthService.RefreshTokenAsync(string refreshToken)
     {
         throw new NotImplementedException();
     }
@@ -76,4 +96,7 @@ public class AuthService : IAuthService
     {
         throw new NotImplementedException();
     }
+
+    
+
 }
