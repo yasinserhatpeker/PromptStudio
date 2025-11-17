@@ -60,9 +60,12 @@ namespace PromptStudio.API.Controllers
 
         [HttpPost("logout")]
         // POST api/auth/logout
-        public async Task<IActionResult> Logout([FromBody] RefreshToken refreshToken)
+        public async Task<IActionResult> Logout([FromBody] LoginDTO loginDTO)
         {
-            
+            if(!ModelState.IsValid)
+            {
+                return 
+            }
         }
     }
 }

@@ -176,6 +176,7 @@ public class AuthService : IAuthService
             return true;
         }
         existingToken.RevokedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
         return true;
     }
 
