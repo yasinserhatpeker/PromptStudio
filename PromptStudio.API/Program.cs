@@ -56,17 +56,18 @@ builder.Services.AddRateLimiter(options =>
     {
         var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
-        return RateLimitPartition.GetPartition(
-            partitionKey: ip,
-            factory: key => new FixedWindowRateLimiterOptions
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: ip,                        // IP başına ayrı limit
+            factory: _ => new FixedWindowRateLimiterOptions
             {
-                PermitLimit = 5,                          // 1 pencere içinde izin verilen istek sayısı
-                Window = TimeSpan.FromMinutes(1),         // pencere süresi
+                PermitLimit = 5,                     // pencere başına izin verilen istek sayısı
+                Window = TimeSpan.FromMinutes(1),    // pencere süresi
                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                QueueLimit = 0                            // kuyruğa alma, doğrudan 429
+                QueueLimit = 0                       // kuyruğa alma, direkt 429
             });
     });
 });
+
 
 
 
