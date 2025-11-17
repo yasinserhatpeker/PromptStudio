@@ -74,6 +74,24 @@ namespace PromptStudio.API.Controllers
             }
             return NoContent();
          }
+
+         [HttpPost("refresh")]
+         [AllowAnonymous]
+         // POST api/auth/refresh
+         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDTO refreshTokenDTO)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);  
+            }
+            var refreshToken = await _authService.RefreshTokenAsync(refreshTokenDTO.RefreshToken);
+            if(refreshToken == null)
+            {
+                return Unauthorized("Refresh token is invalid or expired");
+            }
+            return Ok(refreshToken);
+
+        }
          
     }
 }
