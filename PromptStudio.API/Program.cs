@@ -1,7 +1,10 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.RateLimiting;
 using PromptStudio.Application.Mappings;
 using PromptStudio.Application.Services.Collections;
 using PromptStudio.Application.Services.Prompts;
@@ -46,6 +49,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Authorization (gerekli)
 builder.Services.AddAuthorization();
 
+// RateLimiting Policy eklendi
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy("LoginPolicy", httpContext =>
+    {
+        var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetPartition(
+            partitionKey: ip,
+            factory: key => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,                          // 1 pencere içinde izin verilen istek sayısı
+                Window = TimeSpan.FromMinutes(1),         // pencere süresi
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0                            // kuyruğa alma, doğrudan 429
+            });
+    });
+});
+
+
+
 // DI registrations
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(PromptProfile).Assembly);
@@ -68,9 +92,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// *** Burada middleware sırası önemli ***
+//  Burada middleware sırası önemli 
 app.UseAuthentication(); // JWT doğrulaması
-app.UseAuthorization();  // Yetkilendirme
+app.UseAuthorization(); // Yetkilendirme
+app.UseRateLimiter();  
 
 app.MapControllers();
 
