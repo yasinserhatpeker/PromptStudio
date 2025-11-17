@@ -59,13 +59,21 @@ namespace PromptStudio.API.Controllers
         }
 
         [HttpPost("logout")]
+        [AllowAnonymous]
         // POST api/auth/logout
-        public async Task<IActionResult> Logout([FromBody] LoginDTO loginDTO)
+        public async Task<IActionResult> Logout([FromBody] LogoutDTO logoutDTO)
         {
             if(!ModelState.IsValid)
             {
-                return 
+                return BadRequest(ModelState);
             }
-        }
+            var logout = await _authService.LogoutAsync(logoutDTO.RefreshToken);
+            if(!logout)
+            {
+                return NotFound("Refresh token is not found");
+            }
+            return NoContent();
+         }
+         
     }
 }
