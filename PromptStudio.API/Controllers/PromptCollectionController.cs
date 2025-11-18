@@ -10,7 +10,7 @@ namespace PromptStudio.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class PromptCollectionController : ControllerBase
+    public class PromptCollectionController : BaseApiController
     {
         private readonly ICollectionService _collectionService;
 
@@ -21,13 +21,18 @@ namespace PromptStudio.API.Controllers
 
         // POST api/collection/
         [HttpPost]
-        public async Task<IActionResult> CreatePromptCollection([FromBody] CreateCollectionDTO createCollectionDTO, [FromRoute] Guid userId)
+        public async Task<IActionResult> CreatePromptCollection([FromBody] CreateCollectionDTO createCollectionDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var promptCollection = await _collectionService.CreatePromptCollectionAsync(createCollectionDTO, userId);
+            var userId = GetUserId();
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+            var promptCollection = await _collectionService.CreatePromptCollectionAsync(createCollectionDTO, userId.Value);
 
             if (promptCollection == null)
             {
@@ -39,10 +44,15 @@ namespace PromptStudio.API.Controllers
         }
 
         // GET api/collection/{userId}
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetPromptCollectionsByUser([FromRoute] Guid userId)
+        [HttpGet("{guid}")]
+        public async Task<IActionResult> GetPromptCollectionsByUser()
         {
-            var promptCollection = await _collectionService.GetPromptCollectionsByUserAsync(userId);
+            var userId = GetUserId();
+            if(userId == null)
+            {
+                return Unauthorized();
+            }
+            var promptCollection = await _collectionService.GetPromptCollectionsByUserAsync(userId.Value);
             if (!promptCollection.Any() || promptCollection == null)
             {
                 return Ok(Enumerable.Empty<object>());
@@ -51,15 +61,20 @@ namespace PromptStudio.API.Controllers
         }
 
         // DELETE api/collection/{userId}
-        [HttpDelete("{userId}/{Id}")]
-        public async Task<IActionResult> DeletePromptCollection([FromRoute] Guid userId, [FromRoute] Guid Id)
-        {
-            var promptCollection = await _collectionService.GetPromptCollectionAsync(userId, Id);
+        [HttpDelete("{guid}/{Id}")]
+        public async Task<IActionResult> DeletePromptCollection([FromRoute] Guid Id)
+        {    
+            var userId = GetUserId();
+            if(userId == null)
+            {
+                return Unauthorized();
+            }
+            var promptCollection = await _collectionService.GetPromptCollectionAsync(userId.Value, Id);
             if (promptCollection == null)
             {
                 return NotFound("Collection not found.");
             }
-            var result = await _collectionService.DeletePromptCollectionAsync(Id, userId);
+            var result = await _collectionService.DeletePromptCollectionAsync(Id, userId.Value);
             if (!result)
             {
                 return BadRequest("the collection could not be deleted");
@@ -69,15 +84,20 @@ namespace PromptStudio.API.Controllers
         }
 
         // PUT api/collection/{userId}/{Id}
-        [HttpPut("{userId}/{Id}")]
-        public async Task<IActionResult> UpdatePromptCollection([FromBody]UpdateCollectionDTO updateCollectionDTO, [FromRoute] Guid userId, [FromRoute] Guid Id )
+        [HttpPut("{guid}/{Id}")]
+        public async Task<IActionResult> UpdatePromptCollection([FromBody]UpdateCollectionDTO updateCollectionDTO, [FromRoute] Guid Id )
         {
-            var promptCollection = await _collectionService.GetPromptCollectionAsync(userId, Id);
+            var userId = GetUserId();
+            if( userId == null)
+            {
+                return Unauthorized();
+            }
+            var promptCollection = await _collectionService.GetPromptCollectionAsync(userId.Value, Id);
             if (promptCollection == null)
             {
                 return NotFound("Collection not found.");
             }
-            var result = await _collectionService.UpdatePromptCollectionAsync(Id, userId, updateCollectionDTO);
+            var result = await _collectionService.UpdatePromptCollectionAsync(Id, userId.Value, updateCollectionDTO);
             if (result == null)
             {
                 return BadRequest("Collection could not be updated");
