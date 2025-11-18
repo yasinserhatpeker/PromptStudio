@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PromptStudio.Application.DTOs.Prompt;
@@ -9,7 +11,7 @@ namespace PromptStudio.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PromptController : ControllerBase
+    [Authorize]    public class PromptController : ControllerBase
     {
         private readonly IPromptService _promptService;
 
@@ -20,19 +22,25 @@ namespace PromptStudio.API.Controllers
 
         // POST api/prompt
         [HttpPost]
-        public async Task<IActionResult> CreatePrompt([FromBody] CreatePromptDTO createPromptDTO, [FromQuery] Guid userId)
+        public async Task<IActionResult> CreatePrompt([FromBody] CreatePromptDTO createPromptDTO)
         {
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+             if(userIdClaim == null)
+            {
+                return Unauthorized();
+            }
+            var userId =Guid.Parse(userIdClaim);
             var result = await _promptService.CreatePromptAsync(userId, createPromptDTO);
             if (result == null)
             {
                 return BadRequest("Failed to create prompt");
             }
 
-            return CreatedAtAction(nameof(GetPromptById), new { id = result.UserId }, result);
+            return CreatedAtAction(nameof(GetPromptById), new { id = result.Id }, result);
 
         }
 
@@ -43,7 +51,7 @@ namespace PromptStudio.API.Controllers
             var prompt = await _promptService.GetPromptByIdAsync(id);
             if (prompt == null)
             {
-                return BadRequest("prompt cannot found.");
+                return NotFound("prompt cannot found.");
             }
             return Ok(prompt);
         }
@@ -51,16 +59,22 @@ namespace PromptStudio.API.Controllers
 
         // DELETE api/prompt/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePromptById([FromQuery] Guid userId, Guid id)
+        public async Task<IActionResult> DeletePromptById(Guid id)
         {
             var prompt = await _promptService.GetPromptByIdAsync(id);
             if (prompt == null)
             {
                 return NotFound("prompt cannot found");
             }
+          var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+          if(userIdClaim == null)
+            {
+                return Unauthorized();
+            }
+            var userId = Guid.Parse(userIdClaim);
             if (prompt.UserId != userId)
             {
-                return BadRequest();
+                return Forbid();
             }
             var result = await _promptService.DeletePromptAsync(userId, id);
             if (!result)
@@ -73,8 +87,18 @@ namespace PromptStudio.API.Controllers
         }
         // UPDATE api/prompt/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePrompt([FromQuery] Guid userId, Guid id, [FromBody] UpdatePromptDTO updatePromptDTO)
+        public async Task<IActionResult> UpdatePrompt(Guid id, [FromBody] UpdatePromptDTO updatePromptDTO)
         {
+             if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if(userIdClaim == null)
+            {
+                return Unauthorized();
+            }
+            var userId = Guid.Parse(userIdClaim);
             var prompt = await _promptService.GetPromptByIdAsync(id);
             if (prompt == null)
             {
@@ -94,26 +118,21 @@ namespace PromptStudio.API.Controllers
 
         }
         // GET api/prompt/user
-        [HttpGet]
-        public async Task<IActionResult> GetPromptsByUser([FromQuery]Guid userId)
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMyPrompts()
         {
-            var prompts = await _promptService.GetPromptsByUserAsync(userId);
-            if (prompts.Count == 0 || prompts== null)
+             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+             if(userIdClaim == null)
             {
-                return NotFound("prompts cannot found");
+                return Unauthorized();
             }
+             var userId =Guid.Parse(userIdClaim);
+             var prompts = await _promptService.GetPromptsByUserAsync(userId);
+
+           
            return Ok(prompts);
         }
         
-
-
-
-
-        
-        
-    
-        
-
         
     }
 }

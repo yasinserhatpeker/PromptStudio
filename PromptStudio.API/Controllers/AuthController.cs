@@ -84,12 +84,12 @@ namespace PromptStudio.API.Controllers
             {
                 return BadRequest(ModelState);  
             }
-            var refreshToken = await _authService.RefreshTokenAsync(refreshTokenDTO.RefreshToken);
-            if(refreshToken == null)
+            var authResult = await _authService.RefreshTokenAsync(refreshTokenDTO.RefreshToken);
+            if(authResult == null)
             {
                 return Unauthorized("Refresh token is invalid or expired");
             }
-            return Ok(refreshToken);
+            return Ok(authResult);
 
         }
          

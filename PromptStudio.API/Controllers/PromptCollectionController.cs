@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PromptStudio.Application.DTOs.Collection;
@@ -8,6 +9,7 @@ namespace PromptStudio.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PromptCollectionController : ControllerBase
     {
         private readonly ICollectionService _collectionService;
