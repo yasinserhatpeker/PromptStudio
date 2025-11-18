@@ -45,18 +45,19 @@ namespace PromptStudio.API.Controllers
             }
 
             return Ok(result);
-        }
+            
+            }
 
         // DELETE api/user/{userId}
         [HttpDelete("{userId}")]
-        public async Task<IActionResult> DeleteUser([FromRoute] Guid userId)
+        public async Task<IActionResult> DeleteUser()
         {
-            var user = await _userService.GetUserByIdAsync(userId);
-            if (user == null)
+            var userId = GetUserId();
+            if (userId is null)
             {
-                return NotFound("User cannot found");
+                return Unauthorized();
             }
-            var result = await _userService.DeleteUserAsync(userId);
+            var result = await _userService.DeleteUserAsync(userId.Value);
             if (!result)
             {
                 return BadRequest();
@@ -66,18 +67,23 @@ namespace PromptStudio.API.Controllers
 
         // UPDATE api/user/{userId}
         [HttpPut("{userId}")]
-        public async Task<IActionResult> UpdateUser([FromRoute] Guid userId, [FromBody] UpdateUserDTO updateUserDTO)
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO updateUserDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var user = await _userService.GetUserByIdAsync(userId);
+            var userId = GetUserId();
+            if(userId is null)
+            {
+                return Unauthorized();
+            }
+            var user = await _userService.GetUserByIdAsync(userId.Value);
             if (user == null)
             {
                 return NotFound("User cannot found");
             }
-            var result = await _userService.UpdateUserAsync(userId, updateUserDTO);
+            var result = await _userService.UpdateUserAsync(userId.Value, updateUserDTO);
             if (result == null)
             {
                 return BadRequest("User cannot updated");
