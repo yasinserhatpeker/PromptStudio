@@ -91,8 +91,8 @@ namespace PromptStudio.API.Controllers
             return Ok(result);
         }
     // GET api/users
-    [HttpGet]
-    public async Task<IActionResult> GetAllUsers()
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userService.GetAllUsers();
             if(!users.Any() || users == null)
@@ -103,7 +103,7 @@ namespace PromptStudio.API.Controllers
 
         }
 
-    }
+        }
     
     
 }
