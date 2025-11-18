@@ -9,7 +9,7 @@ namespace PromptStudio.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UserController : ControllerBase
+    public class UserController : BaseApiController
     {
         private readonly IUserService _userService;
         public UserController(IUserService userService)
@@ -25,6 +25,7 @@ namespace PromptStudio.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
             var result = await _userService.CreateUserAsync(createUserDTO);
             if (result == null)
             {

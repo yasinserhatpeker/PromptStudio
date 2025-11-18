@@ -71,7 +71,7 @@ public class AuthService : IAuthService
         var refreshToken = new RefreshToken
         {
             Id = Guid.NewGuid(),
-            userId=user.Id,
+            UserId=user.Id,
             Token=refreshTokenValue,
             ExpiresAt=DateTime.UtcNow.AddDays(7),
         };

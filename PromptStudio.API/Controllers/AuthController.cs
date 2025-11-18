@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using PromptStudio.Application.DTOs.User;
 using PromptStudio.Application.Services.Users;
-using PromptStudio.Domain.Entites;
+
 
 namespace PromptStudio.API.Controllers
 {
@@ -28,13 +27,19 @@ namespace PromptStudio.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var user = _authService.RegisterAsync(createUserDTO);
+            var user = await _authService.RegisterAsync(createUserDTO);
             if(user == null)
             {
                 return BadRequest("The registration could not be completed.");
             }
             
-           return CreatedAtAction(nameof(UserController.GetUserById),new {id =user.Id},user);
+            return CreatedAtAction(
+                actionName: nameof(UserController.GetUserById),
+                controllerName: "User",
+                routeValues: new { id = user.Id },
+                value: user
+            );
+
 
         }
 
