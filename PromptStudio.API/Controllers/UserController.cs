@@ -36,9 +36,14 @@ namespace PromptStudio.API.Controllers
 
         // GET api/user/{userId}
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserById([FromRoute] Guid userId)
-        {
-            var result = await _userService.GetUserByIdAsync(userId);
+        public async Task<IActionResult> GetUserById()
+        {   
+            var userId = GetUserId();
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
+            var result = await _userService.GetUserByIdAsync(userId.Value);
             if (result == null)
             {
                 return NotFound();
