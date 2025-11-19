@@ -30,23 +30,16 @@ namespace PromptStudio.API.Controllers
             {
                 return BadRequest("User cannot be created");
             }
-            return CreatedAtAction(nameof(GetUserById), new { userId = result.Id }, result);
+            return CreatedAtAction(nameof(GetUserById), new { id = result.Id }, result);
         }
 
         // GET api/user/{userId}
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetUserById()
+        public async Task<IActionResult> GetUserById(Guid id)
         {   
-            var userId = GetUserId();
-            if (userId is null)
-            {
-                return Unauthorized();
-            }
-            var result = await _userService.GetUserByIdAsync(userId.Value);
-            if (result == null)
-            {
-                return NotFound();
-            }
+            var result = await _userService.GetUserByIdAsync(id);
+               if (result == null)
+              return NotFound();
 
             return Ok(result);
             

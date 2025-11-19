@@ -143,25 +143,42 @@ public class AuthService : IAuthService
 
     }
 
-    public async Task<UserResponseDTO?> RegisterAsync(CreateUserDTO createUserDTO)
+  
+public async Task<UserResponseDTO?> RegisterAsync(CreateUserDTO createUserDTO)
+{
+    try
     {
+        // Email var mı kontrol ediyor
         var exists = await _context.Users.AnyAsync(u => u.Email == createUserDTO.Email);
-        if(exists)
+        if (exists)
         {
+            Console.WriteLine($"Register failed: Email {createUserDTO.Email} already exists.");
             return null;
         }
-        var user = _mapper.Map<User>(createUserDTO);
 
+        // User objesini map ediyor
+        var user = _mapper.Map<User>(createUserDTO);
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDTO.Password);
         user.CreatedAt = DateTime.UtcNow;
         user.UpdatedAt = DateTime.UtcNow;
 
+        // Veritabanına ekliyor
         await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
+        var saveResult = await _context.SaveChangesAsync();
+        
+        Console.WriteLine($"Register success: {saveResult} rows saved."); // log
 
         return _mapper.Map<UserResponseDTO>(user);
-
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Register failed with exception: {ex.Message}");
+        throw; 
+    }
 }
+
+
+
 
     public async Task<bool> LogoutAsync(string refreshToken)
     {
@@ -180,6 +197,6 @@ public class AuthService : IAuthService
         return true;
     }
 
-    
+ }
 
-}
+

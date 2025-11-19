@@ -36,7 +36,7 @@ namespace PromptStudio.API.Controllers
             return CreatedAtAction(
                 actionName: nameof(UserController.GetUserById),
                 controllerName: "User",
-                routeValues: new { userId = user.Id  },
+                routeValues: new { id = user.Id  },
                 value: user
             );
 
