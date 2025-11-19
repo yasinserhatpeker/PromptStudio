@@ -34,7 +34,7 @@ namespace PromptStudio.API.Controllers
         }
 
         // GET api/user/{userId}
-        [HttpGet]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetUserById()
         {   
             var userId = GetUserId();
