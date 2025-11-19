@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PromptStudio.Application.DTOs.User;
 using PromptStudio.Application.Services.Users;
@@ -35,7 +34,7 @@ namespace PromptStudio.API.Controllers
         }
 
         // GET api/user/{userId}
-        [HttpGet("{userId}")]
+        [HttpGet]
         public async Task<IActionResult> GetUserById()
         {   
             var userId = GetUserId();
@@ -54,7 +53,7 @@ namespace PromptStudio.API.Controllers
             }
 
         // DELETE api/user/{userId}
-        [HttpDelete("{userId}")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteUser()
         {
             var userId = GetUserId();
@@ -71,7 +70,7 @@ namespace PromptStudio.API.Controllers
         }
 
         // UPDATE api/user/{userId}
-        [HttpPut("{userId}")]
+        [HttpPut]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO updateUserDTO)
         {
             if (!ModelState.IsValid)
@@ -100,10 +99,8 @@ namespace PromptStudio.API.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userService.GetAllUsers();
-            if(!users.Any() || users == null)
-            {
-                return NoContent();
-            }
+            if (users == null || !users.Any())
+            return NoContent();
             return Ok(users);
 
         }
