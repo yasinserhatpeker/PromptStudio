@@ -74,6 +74,16 @@ builder.Services.AddRateLimiter(options =>
 
 // DI registrations
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+   options.AddPolicy("AllowAll", policy =>
+   {
+       policy.AllowAnyMethod()
+       .AllowAnyHeader()
+       .SetIsOriginAllowed(origin => true)
+       .AllowCredentials();
+   });
+});
 builder.Services.AddAutoMapper(typeof(PromptProfile).Assembly);
 builder.Services.AddScoped<IPromptService, PromptService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -128,6 +138,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 
 //  Burada middleware sırası önemli 
 app.UseAuthentication(); // JWT doğrulaması
