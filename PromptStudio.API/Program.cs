@@ -15,6 +15,7 @@ using Serilog;
 using Microsoft.AspNetCore.Components.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+var allowedOrigin = builder.Configuration["AllowedOrigins"];
 
 // OpenAPI
 builder.Services.AddOpenApi();
@@ -90,7 +91,7 @@ builder.Services.AddCors(options =>
             policy.AllowAnyMethod()
             .AllowAnyHeader()
             .WithOrigins(
-                "chrome-extension://<klofcfdfeflkigdeogjandfmjloeboji>"
+               allowedOrigin!
             )
             .AllowCredentials(); // For deployment 
         }
