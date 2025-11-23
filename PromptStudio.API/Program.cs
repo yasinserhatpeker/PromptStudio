@@ -76,13 +76,25 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
-   options.AddPolicy("AllowAll", policy =>
-   {
-       policy.AllowAnyMethod()
-       .AllowAnyHeader()
-       .SetIsOriginAllowed(origin => true)
-       .AllowCredentials();
-   });
+    options.AddPolicy("AllowAll",policy =>
+    {
+        if(builder.Environment.IsDevelopment())
+        {
+            policy.AllowAnyMethod()
+            .AllowAnyHeader()
+            .SetIsOriginAllowed(origin => true)
+            .AllowCredentials();   // Only for development for security risks
+        }
+        else
+        {
+            policy.AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithOrigins(
+                "chrome-extension://<klofcfdfeflkigdeogjandfmjloeboji>"
+            )
+            .AllowCredentials(); // For deployment 
+        }
+    });
 });
 builder.Services.AddAutoMapper(typeof(PromptProfile).Assembly);
 builder.Services.AddScoped<IPromptService, PromptService>();
