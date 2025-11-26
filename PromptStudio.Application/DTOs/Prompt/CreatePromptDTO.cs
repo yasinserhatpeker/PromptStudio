@@ -8,7 +8,6 @@ public class CreatePromptDTO
     public string Title { get; set; } = default!;
     public string Content { get; set; } = default!;
     public string? Tags { get; set; }
-    public Guid UserId { get; set; }
     public Guid CollectionId { get; set; } 
 
 
