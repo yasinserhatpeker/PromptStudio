@@ -83,10 +83,12 @@ public class PromptService : IPromptService
             return null;
         }
          // mapping over existing prompt entity
-         _mapper.Map(prompt, updatePromptDTO);
+         _mapper.Map(updatePromptDTO, prompt);
           
 
         prompt.UpdatedAt = DateTime.UtcNow;
+        prompt.CollectionId = updatePromptDTO.CollectionId;
+        
         await _context.SaveChangesAsync();
 
         return _mapper.Map<PromptResponseDTO>(prompt);

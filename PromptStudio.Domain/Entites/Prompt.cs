@@ -12,5 +12,6 @@ public class Prompt
     public User User { get; set; } = default!;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public Guid? CollectionId { get; set; }
 
 }
